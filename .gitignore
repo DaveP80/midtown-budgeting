@@ -1,0 +1,11 @@
+node_modules
+/.cache
+/public/build
+/.netlify
+.env
+*.DS_Store
+notes.txt
+credentials.json
+Dockerfile
+.github
+client_secret*
