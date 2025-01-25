@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { db } from "../render.server.ts";
 import nodemailer from "nodemailer";
 
-import { UserAlreadyExistsError, EmailHostError, PasswordError, AuthError,  LoginTokenError } from "../lib/customErrors.ts";
+import { UserAlreadyExistsError, EmailHostError, PasswordError, AuthError, LoginTokenError } from "../lib/customErrors.ts";
 
 
 const htmlContent = `
@@ -19,8 +19,7 @@ const htmlLoginContent = `
   <html>
     <body>
       <h3>Hello, World!</h3>
-      $(SecretCode)
-      <a href="$(url)" target="_blank">Please Enter this Secret Key</a>
+      <p>Please Use this Secret Key: $(secret_code)</p>
     </body>
   </html>
 `;
@@ -47,7 +46,6 @@ const createUser = async (data) => {
             `select * from auth_users where user_email ilike $1`,
             [email],
         );
-        console.log("db results", checkLogs)
         if (checkLogs[0]) {
             throw new UserAlreadyExistsError(
                 `Cannot register with a previously used email: ${email}`,
@@ -108,8 +106,9 @@ const createUser = async (data) => {
     }
 };
 
-const login = async (data, tokenflag) => {
+const login = async (data: Record<string, string>) => {
     const { email, password } = data;
+    let randomNumber;
 
     const foundUser = await db.any(
         `select
@@ -123,9 +122,6 @@ const login = async (data, tokenflag) => {
         throw new PasswordError("Invalid email address", "user login error");
     } else {
         let user = foundUser[0];
-        if (tokenflag && user.email != tokenflag) {
-            throw new LoginTokenError();
-        }
         let comparedPassword = await bcrypt.compare(password, user.password);
 
         if (!comparedPassword) {
@@ -134,12 +130,55 @@ const login = async (data, tokenflag) => {
                 "login credential error",
             );
         }
+        if (comparedPassword) {
 
-        return {
-            accessToken: true,
-        };
+            const transporter = nodemailer.createTransport({
+                service: "Gmail",
+                auth: {
+                    user: process.env.EMAIL_ADD,
+                    pass: process.env.PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_ADD,
+                to: email,
+                subject: "This login code is for you",
+                html: htmlLoginContent
+                    .replace(
+                        "$(secret_code)",
+                        () => {
+                            const min = 1000;
+                            const max = 9999;
+                            randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+                            return randomNumber.toString();
+                        }
+                    )
+            };
+
+            await transporter.sendMail(mailOptions);
+            const insertSecret = await db.any(
+                `insert into auth_logins(user_id, secret_code) values ($1, $2) returning *`,
+                [user.id, randomNumber],
+            );
+            if (insertSecret) {
+
+                return {
+                    message: `Welcome Back`,
+                    id: insertSecret[0].id,
+                    ok: true
+                };
+            } else {
+               return {
+                message: "unable to insert secret code",
+                id: -1,
+                ok: false
+               } 
+            }
+        } else {
+            throw new EmailHostError(`Email host server error`);
+        }
     }
-
 };
 //when a user clicks on email confirmation link
 const authLogin = async (decodedToken: Record<string, string> | string) => {
@@ -147,7 +186,7 @@ const authLogin = async (decodedToken: Record<string, string> | string) => {
         const auUser = await db.any(
             //set users is_auth to true
             `Update users set is_auth = true where id in (select id from users where id=$1 and is_auth=false) returning *`,
-            decodedToken.id,
+            decodedToken?.id,
         );
         if (auUser.length === 0) {
             throw new AuthError(`Invalid id: ${decodedToken.id}`);
@@ -161,6 +200,24 @@ const authLogin = async (decodedToken: Record<string, string> | string) => {
         } else throw { message: "server error", error: e.name, status: 500 };
     }
 };
+//For a user to login, 4 digit confirm code with storage.
+const confirmCode = async (args: any[]) => {
+    try {
+        const foundCode = await db.any(`select * from auth_logins where secret_code = $2 and id = $1`, args)
+        if (foundCode) {
+            return { message: "success", ok: true };
+        }
+        else {
+            return {message: "failure to verify code, try again", ok: false}
+        }
+    } catch (e) {
+        throw {
+            error: e.name,
+            message: e.message,
+            status: 500,
+        }
+    }
+}
 //user profile information
 const getInfo = async (args) => {
     try {
@@ -183,10 +240,7 @@ const getInfo = async (args) => {
             args,
         );
         if (userJoin.length === 0) {
-            throw new TokenError(
-                "Invalid lookup id",
-                "",
-            );
+            throw new Error();
         } else {
             return { ...userJoin[0] };
         }
@@ -229,6 +283,7 @@ export {
     login,
     authLogin,
     getInfo,
+    confirmCode,
     getByEmail,
 };
 

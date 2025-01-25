@@ -13,12 +13,17 @@ export async function action({ request }: ActionFunctionArgs) {
     if (password && password.length < 5) { pwdErr = true };
     const success = (!pwdErr && !emailErr);
     if (success) {
-          const result = await createUser({password, email});
-          if (result?.ok) {
-            return Response.json({ message: result.message });
-          }
+        try {
+            const result = await createUser({password, email});
+            if (result?.ok) {
+              return Response.json({ message: result.message });
+            }
+
+        } catch(e: any) {
+            return Response.json({ pwdErr, emailErr, message: e.message });
+        }
     }
-    return Response.json({ pwdErr, emailErr, success, message: false });
+    return Response.json({ pwdErr, emailErr, message: false });
 };
 
 export default function Index() {

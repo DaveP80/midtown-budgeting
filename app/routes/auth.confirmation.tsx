@@ -1,6 +1,5 @@
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { useEffect } from 'react';
 import { checkNewUser } from '~/utils/middleware/newuser.server';
 import { authLogin } from '~/utils/queries/users.server';
 
@@ -9,16 +8,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
     let uID;
 
     if (!token) {
-        return Response.json({ error: 'Token is missing' }, { status: 400 });
+        return Response.json({ error: 'Token is missing' });
     }
     else {
         try {
             uID = await authLogin(checkNewUser(token));
         } catch {
-            return Response.json({ error: 'Broken token string' }, { status: 400 });
+            return Response.json({ error: 'Broken token string' });
         }
     }
-    return Response.json({ message: uID, ok: true }, { status: 200 });
+    return Response.json({ message: uID, ok: true });
 };
 
 export default function Confirmation() {
