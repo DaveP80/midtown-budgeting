@@ -1,0 +1,235 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { db } from "../render.server.ts";
+import nodemailer from "nodemailer";
+
+import { UserAlreadyExistsError, EmailHostError, PasswordError, AuthError,  LoginTokenError } from "../lib/customErrors.ts";
+
+
+const htmlContent = `
+  <html>
+    <body>
+      <h3>Hello, New User!</h3>
+      <a href="$(url)" target="_blank">Confirm your Account</a>
+    </body>
+  </html>
+`;
+
+const htmlLoginContent = `
+  <html>
+    <body>
+      <h3>Hello, World!</h3>
+      $(SecretCode)
+      <a href="$(url)" target="_blank">Please Enter this Secret Key</a>
+    </body>
+  </html>
+`;
+
+const getAllUsers = async () => {
+    try {
+        const allUsers = await db.any("SELECT * FROM users");
+
+        return allUsers;
+    } catch (e) {
+        throw e;
+    }
+};
+
+const createUser = async (data) => {
+    const { password, email } = data;
+
+    let salt = await bcrypt.genSalt(10);
+
+    let hashedPassword = await bcrypt.hash(password, salt);
+
+    try {
+        const checkLogs = await db.any(
+            `select * from auth_users where user_email ilike $1`,
+            [email],
+        );
+        console.log("db results", checkLogs)
+        if (checkLogs[0]) {
+            throw new UserAlreadyExistsError(
+                `Cannot register with a previously used email: ${email}`,
+            );
+        }
+        const res = await db.any(
+            `insert into users(email, password) values ($1, $2) returning *`,
+            [email, hashedPassword],
+        );
+
+        if (res[0]) {
+            let jwtToken = jwt.sign(
+                {
+                    email,
+                    id: res[0]["id"],
+                },
+                process.env.JWT_TOKEN_SECRET_KEY!,
+                { expiresIn: "7d" },
+            );
+
+            const transporter = nodemailer.createTransport({
+                service: "Gmail",
+                auth: {
+                    user: process.env.EMAIL_ADD,
+                    pass: process.env.PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_ADD,
+                to: email,
+                subject: "welcome and confirm",
+                html: htmlContent
+                    .replace(
+                        "$(url)",
+                        process.env.NODE_ENV === "development"
+                            ? `http://localhost:5173/auth/confirmation?k=${jwtToken}`
+                            : `https://midtown-personal-34570864936.us-east1.run.app/auth/confirmation?k=${jwtToken}`,
+                    )
+            };
+
+            const info = await transporter.sendMail(mailOptions);
+            console.log("Email sent:", info.response);
+            return { message: `Email sent to ${email} successfully`, ok: true };
+        } else {
+            throw new EmailHostError(`Email host server error`);
+        }
+    } catch (error) {
+        if (
+            error instanceof UserAlreadyExistsError ||
+            error instanceof EmailHostError
+        ) {
+            throw error;
+        } else
+            throw new UserAlreadyExistsError(
+                `User with email ${email} already exists.`,
+            );
+    }
+};
+
+const login = async (data, tokenflag) => {
+    const { email, password } = data;
+
+    const foundUser = await db.any(
+        `select
+      c.id,
+      c.email,
+      c.password from users c where c.is_auth = true`,
+        email,
+    );
+
+    if (foundUser.length === 0) {
+        throw new PasswordError("Invalid email address", "user login error");
+    } else {
+        let user = foundUser[0];
+        if (tokenflag && user.email != tokenflag) {
+            throw new LoginTokenError();
+        }
+        let comparedPassword = await bcrypt.compare(password, user.password);
+
+        if (!comparedPassword) {
+            throw new PasswordError(
+                "Please check your email and password",
+                "login credential error",
+            );
+        }
+
+        return {
+            accessToken: true,
+        };
+    }
+
+};
+//when a user clicks on email confirmation link
+const authLogin = async (decodedToken: Record<string, string> | string) => {
+    try {
+        const auUser = await db.any(
+            //set users is_auth to true
+            `Update users set is_auth = true where id in (select id from users where id=$1 and is_auth=false) returning *`,
+            decodedToken.id,
+        );
+        if (auUser.length === 0) {
+            throw new AuthError(`Invalid id: ${decodedToken.id}`);
+        } else {
+            let sqlArr = auUser[0];
+            return sqlArr;
+        }
+    } catch (e: any) {
+        if (e instanceof AuthError) {
+            throw e;
+        } else throw { message: "server error", error: e.name, status: 500 };
+    }
+};
+//user profile information
+const getInfo = async (args) => {
+    try {
+        const userJoin = await db.any(
+            `select
+      c.id,
+      c.email,
+      c.password,
+      au.all_is_auth
+    from
+      (
+      select
+        *
+      from
+        users
+      where
+        id = $1) c
+    join auth_users au on
+      c.id = au.user_id where id = $1`,
+            args,
+        );
+        if (userJoin.length === 0) {
+            throw new TokenError(
+                "Invalid lookup id",
+                "",
+            );
+        } else {
+            return { ...userJoin[0] };
+        }
+    } catch (e) {
+        throw {
+            error: e.name,
+            message: e.message,
+            status: 500,
+        };
+    }
+};
+
+const getByEmail = async (email) => {
+    try {
+        const result = await db.any(
+            `select
+      email
+    from
+      user
+    where
+      email ilike $1
+    union
+           select
+      user_email
+    from
+      auth_users
+    where
+      user_email ilike $1`,
+            email,
+        );
+        return result;
+    } catch (e) {
+        throw e;
+    }
+};
+
+export {
+    getAllUsers,
+    createUser,
+    login,
+    authLogin,
+    getInfo,
+    getByEmail,
+};
+
+

@@ -1,7 +1,7 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { useActionData } from "@remix-run/react";
 import Signup from "~/components/Signup";
-import { createSupabaseServerClient } from "~/utils/supabase.server";
+import { createUser } from "~/utils/queries/users.server";
 
 export async function action({ request }: ActionFunctionArgs) {
     const formData = await request.formData();
@@ -13,28 +13,20 @@ export async function action({ request }: ActionFunctionArgs) {
     if (password && password.length < 5) { pwdErr = true };
     const success = (!pwdErr && !emailErr);
     if (success) {
-        const response = new Response();
-        const supabase = createSupabaseServerClient({ request, response });
-        async function signUpNewUser() {
-            const { data, error } = await supabase.auth.signUp({
-              email: email,
-              password: password,
-              options: {
-                emailRedirectTo: process.env.VITE_APP_URL,
-              },
-            })
+          const result = await createUser({password, email});
+          if (result?.ok) {
+            return Response.json({ message: result.message });
           }
-          await signUpNewUser();
-          
     }
-    return Response.json({ pwdErr, emailErr, success });
+    return Response.json({ pwdErr, emailErr, success, message: false });
 };
 
 export default function Index() {
     const formData = useActionData<typeof action>();
     const isPwdErr = formData?.pwdErr;
     const isEmailErr = formData?.emailErr;
+    const message = formData?.message
     return <>
-        <Signup errors={{ isPwdErr, isEmailErr }} />
+        <Signup errors={{ isPwdErr, isEmailErr }} message={{message}} />
     </>
 }

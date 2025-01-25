@@ -1,8 +1,9 @@
 import { Form } from "@remix-run/react"
 
-export default function({ errors }: { errors: { isPwdErr: boolean, isEmailErr: boolean } }): React.ReactNode {
+export default function({ errors, message }: { errors: { isPwdErr: boolean, isEmailErr: boolean }, message: any  }): React.ReactNode {
 
-   return <Form method="post">
+   return <>
+   <Form method="post">
         <label htmlFor="email">email:</label>
         <input name="email" type="email" />
         {errors.isEmailErr && <p>Email must be alphanumeric longer than 4 characters.</p>}
@@ -11,4 +12,6 @@ export default function({ errors }: { errors: { isPwdErr: boolean, isEmailErr: b
             {errors.isPwdErr && <p>Password must be alphanumeric longer than 4 characters.</p>}
             <button type="submit">Sign Up</button>
         </Form>
+        {message.message || ""}
+   </>
 };

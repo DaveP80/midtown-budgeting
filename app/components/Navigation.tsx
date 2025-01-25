@@ -1,7 +1,6 @@
 import { Form, NavLink } from "@remix-run/react";
 
-export default function Navigation({ context }: any) {
-  const { session } = context;
+export default function Navigation() {
   return (
     <nav className="bg-gray-800 p-4">
       <ul className="flex space-x-6">
@@ -35,19 +34,15 @@ export default function Navigation({ context }: any) {
             About
           </NavLink>
         </li>
-        {session?.user ? (
           <li>
             <Form
               id="logoutForm"
-              action={`/logout/${session.user.id}`}
+              action={`/logout`}
               method="post"
             >
-              <button type="submit" className="btn btn-xs btn-error">Logout</button>
+              <button type="submit" className="btn btn-xs btn-error bg-red-400">Logout</button>
             </Form>
           </li>
-        ) : (
-          <div className=""></div>
-        )}
       </ul>
     </nav>
   );
