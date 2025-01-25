@@ -19,18 +19,13 @@ import { createSupabaseServerClient } from "./utils/supabase.server";
 import "./tailwind.css"
 
 export const loader = async ({ request }: any) => {
-  const env = {
-    SUPABASE_URL: process.env.SUPABASE_URL!,
-    SUPABASE_PUBLIC_KEY: process.env.SUPABASE_PUBLIC_KEY!,
-  };
-
   const response = new Response();
   const supabase = createSupabaseServerClient({ request, response });
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return Response.json({ env, session }, {
+  return Response.json({ session }, {
     headers: response.headers
   });
 };
@@ -54,11 +49,11 @@ export function ErrorBoundary() {
 }
 
 export default function App() {
-  const { env, session } = useLoaderData<typeof loader>();
+  const { session } = useLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
 
   const [supabase] = useState(() =>
-    createBrowserClient(env.SUPABASE_URL, env.SUPABASE_PUBLIC_KEY)
+    createBrowserClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLIC_KEY)
   );
   const serverAccessToken = session?.access_token;
 
@@ -88,7 +83,6 @@ export default function App() {
         <Outlet context={{ supabase, session }} />
         <ScrollRestoration />
         <Scripts />
-        {/* <LiveReload /> */}
       </body>
     </html>
   );

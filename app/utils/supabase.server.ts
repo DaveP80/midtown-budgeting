@@ -6,9 +6,10 @@ export const createSupabaseServerClient = ({
 }: {
   request: Request;
   response: Response;
-}) =>
-   createServerClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLIC_KEY!,
+}) => {
+    return createServerClient(
+    process.env.VITE_SUPABASE_URL!,
+    process.env.VITE_SUPABASE_PUBLIC_KEY!,
     { request, response }
   );
+}
