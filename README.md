@@ -8,7 +8,7 @@ The Remix dev server starts your app in development mode, rebuilding assets on f
 npm run dev
 ```
 ## Auth Flow
-This uses MFA. New users must sign up with a username, password and email. Google is an Oauth2 provider.  Option after signing up, to login with your username+password or with Google.
+This uses MFA. New users must sign up with a password and email. New logins require the user to check their email for login code. If there is a failed attempt with submitting a login code, the user is notified with an email. A user can also change their password, as long as they prove they know their old password. When the password is successfully changed the user is notified with an email that the password was changed. 
 
 ## Deployment
 
@@ -23,15 +23,7 @@ gcloud auth login
 gcloud config set project <PROJECT_ID>
 ```
 
-## Notes
-
-- Placeholder
-
 ## Environment Variables
-
-SUPABASE_URL=
-SUPABASE_PUBLIC_KEY=
-VITE_API_URL=
-DOMAIN_URL=
+PG_PROMISE_CONNECTION_VARIABLES
 
 <details>Author: David Paquette</details>

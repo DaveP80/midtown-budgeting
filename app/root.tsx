@@ -11,6 +11,7 @@ import Navigation from "./components/Navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import "./tailwind.css"
+import GlobalContextProvider from "./context/globalcontext";
 
 export const loader = async ({ request }: any) => {
   const response = new Response();
@@ -49,8 +50,10 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <GlobalContextProvider>
         <Navigation/>
-        <Outlet  />
+        <Outlet />
+        </GlobalContextProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

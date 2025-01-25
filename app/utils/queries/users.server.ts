@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { db } from "../render.server.ts";
 import nodemailer from "nodemailer";
 
-import { UserAlreadyExistsError, EmailHostError, PasswordError, AuthError, LoginTokenError } from "../lib/customErrors.ts";
+import { UserAlreadyExistsError, EmailHostError, PasswordError, AuthError } from "../lib/customErrors.ts";
 
 
 const htmlContent = `
@@ -20,6 +20,15 @@ const htmlLoginContent = `
     <body>
       <h3>Hello, World!</h3>
       <p>Please Use this Secret Key: $(secret_code)</p>
+    </body>
+  </html>
+`;
+
+const htmlWarningContent = `
+  <html>
+    <body>
+      <h3>If you just made this attempt, you can ignore.</h3>
+      <p>Sorry, there was an unsuccessful attempt to login to the budgeting app with this email address: $(user_email)</p>
     </body>
   </html>
 `;
@@ -112,9 +121,9 @@ const login = async (data: Record<string, string>) => {
 
     const foundUser = await db.any(
         `select
-      c.id,
-      c.email,
-      c.password from users c where c.is_auth = true`,
+      id,
+      email,
+      password from users where email = $1 and is_auth = true`,
         email,
     );
 
@@ -162,18 +171,17 @@ const login = async (data: Record<string, string>) => {
                 [user.id, randomNumber],
             );
             if (insertSecret) {
-
                 return {
                     message: `Welcome Back`,
                     id: insertSecret[0].id,
                     ok: true
                 };
             } else {
-               return {
-                message: "unable to insert secret code",
-                id: -1,
-                ok: false
-               } 
+                return {
+                    message: "unable to insert secret code",
+                    id: -1,
+                    ok: false
+                }
             }
         } else {
             throw new EmailHostError(`Email host server error`);
@@ -203,12 +211,19 @@ const authLogin = async (decodedToken: Record<string, string> | string) => {
 //For a user to login, 4 digit confirm code with storage.
 const confirmCode = async (args: any[]) => {
     try {
-        const foundCode = await db.any(`select * from auth_logins where secret_code = $2 and id = $1`, args)
-        if (foundCode) {
-            return { message: "success", ok: true };
+        const foundCode = await db.any(`select * from auth_logins al join users u on al.user_id = u.id where secret_code = $2 and al.id = $1`, args);
+        if (foundCode.length) {
+            //Clean up secret code table for future attempts.
+            const cleanUpCode = await db.any(`delete from auth_logins where id = $1`, args);
+            if (cleanUpCode) {
+                return { message: "success", id: foundCode[0].user_id, ok: true };
+            } else {
+                return { message: "failure to complete auth, sql server error", ok: false, status: 500 }
+            }
         }
         else {
-            return {message: "failure to verify code, try again", ok: false}
+            await notifyOfBadCode(args);
+            return { message: "failure to verify code, try again", ok: false };
         }
     } catch (e) {
         throw {
@@ -216,6 +231,39 @@ const confirmCode = async (args: any[]) => {
             message: e.message,
             status: 500,
         }
+    }
+}
+
+const notifyOfBadCode = async (args: any[]) => {
+    try {
+        const result = await db.any(`select user_id, email from auth_logins al join users u on al.user_id = u.id where al.id = $1`, args);
+        if (result) {
+            const transporter = nodemailer.createTransport({
+                service: "Gmail",
+                auth: {
+                    user: process.env.EMAIL_ADD,
+                    pass: process.env.PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_ADD,
+                to: result[0].email,
+                subject: "An attempt was made to login to your account",
+                html: htmlWarningContent
+                    .replace(
+                        "$(user_email)",
+                        result[0].email
+                    )
+            };
+            await transporter.sendMail(mailOptions);
+            return { message: "user was notified of attempt", ok: true }
+        }
+        else {
+            return { message: "sql logic error", ok: false }
+        }
+    } catch {
+        throw new EmailHostError(`Email host server error`);
     }
 }
 //user profile information

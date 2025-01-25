@@ -1,6 +1,15 @@
-import { Form, NavLink } from "@remix-run/react";
+import { NavLink, useNavigate } from "@remix-run/react";
+import { useContext } from "react";
+import { GlobalContext } from "~/context/globalcontext";
 
 export default function Navigation() {
+  const UserContext = useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    UserContext.setUser({ id: null });
+    navigate("/");
+  }
   return (
     <nav className="bg-gray-800 p-4">
       <ul className="flex space-x-6">
@@ -34,15 +43,9 @@ export default function Navigation() {
             About
           </NavLink>
         </li>
-          <li>
-            <Form
-              id="logoutForm"
-              action={`/logout`}
-              method="post"
-            >
-              <button type="submit" className="btn btn-xs btn-error bg-red-400">Logout</button>
-            </Form>
-          </li>
+        <li>
+          <button className="btn btn-xs btn-error bg-red-400" onClick={handleClick}>Logout</button>
+        </li>
       </ul>
     </nav>
   );

@@ -1,7 +1,6 @@
 import { Form, useFetcher } from "@remix-run/react";
 
 export const Login = ({ errors, status }: { errors: any, status: { message: string, id: string | number, ok: boolean } }) => {
-  const fetcher = useFetcher();
 
   return (
     <>
@@ -18,11 +17,11 @@ export const Login = ({ errors, status }: { errors: any, status: { message: stri
       {
         status?.ok && <div>
           A 4 digit code has been sent to your email, please confirm to proceed.
-          <fetcher.Form method="post" action={`/auth/verify/${status.id}`}>
+          <Form method="post" action={`/auth/verify/${status.id}`}>
             <label htmlFor="Code">Enter 4 digit Code:</label>
             <input name="Code" type="text" />
             <button type="submit">Enter</button>
-          </fetcher.Form>
+          </Form>
         </div>
       }
     </>
