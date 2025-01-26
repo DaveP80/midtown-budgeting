@@ -1,4 +1,4 @@
-import { Form, useFetcher, useParams } from '@remix-run/react';
+import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useState } from 'react'
 
 function ExpenseData({ expense_data }: { expense_data: any }) {
@@ -17,11 +17,11 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
 
     }, [expense_data]);
 
-    const handleChange = (e) => {
+    const handleChange = (e: any) => {
         setDescription(e.target.value);
     }
 
-    const handleSubtotalChange = (e) => {
+    const handleSubtotalChange = (e: any) => {
         const initValue = expense_data?.length > 0 ? expense_data.find(item => item.description === description)?.amount || 0 : 0;
         setSubtotal(+e.target.value + +initValue);
     }
@@ -56,13 +56,13 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
                     </select>
                 </fetcher.Form>
                 {description && (
-                    <Form method="post" action={`/profile/${id}/enterexpense`}>
+                    <fetcher.Form method="post" action={`/profile/${id}/enterexpense`}>
                         <label htmlFor='description_row'>Increase the expense for: {description}</label>
                         <input type="hidden" name="description_row" readOnly value={description} />
-                        <input type="number" min="1" name="description_row" onChange={handleSubtotalChange} />
+                        <input type="text" name="description_row" onChange={handleSubtotalChange} required pattern="-?[0-9]*" placeholder='1'/>
                         <input type="hidden" name="subtotal" readOnly value={subtotal || 0} />
                         <button type="submit">Enter: {subtotal}</button>
-                    </Form>
+                    </fetcher.Form>
                 )
                 }
             </>}
@@ -71,7 +71,7 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
                 <label htmlFor="description">description:</label>
                 <input name="description" type="text" />
                 <label htmlFor="amount">starting expense amount:</label>
-                <input name="amount" type="number" min="1" />
+                <input name="amount" type="text" required pattern="[0-9]*" />
                 <button type="submit">Enter new expense line!</button>
             </fetcher.Form>
         </>

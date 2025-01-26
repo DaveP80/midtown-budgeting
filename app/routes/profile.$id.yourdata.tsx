@@ -1,11 +1,26 @@
-import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from 'react-router';
 import ExpenseData from '~/components/ExpenseData';
 import IncomeData from '~/components/IncomeData';
 import SummaryData from '~/components/SummaryData';
 import { yourBudgetData } from '~/utils/queries/budget.server';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useActionData } from '@remix-run/react';
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function action({ request }: LoaderFunctionArgs) {
+    const data = await request.formData();
+    const moneyInfo = data.get("bottom_line");
+
+    const genAI = new GoogleGenerativeAI(process.env.GENAI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `My income and expense bottom line is ${moneyInfo} is this good from a budgeting perspective?`;
+
+    const result = await model.generateContent(prompt);
+    return Response.json({ summary: result.response.text(), ok: true });
+}
+
+export async function loader({ params }: LoaderFunctionArgs) {
     try {
         let tableData = await yourBudgetData(params.id || "");
         return Response.json(tableData);
@@ -17,6 +32,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function PersonalFinanceRoute() {
     const loaderData = useLoaderData();
+    const actionData = useActionData<typeof action>();
+
     if (!loaderData) {
         return <div className="div">...Loading</div>
     }
@@ -26,15 +43,13 @@ export default function PersonalFinanceRoute() {
     const data = loaderData?.budget;
     const expenseData = loaderData?.budget ? loaderData.budget.filter(item => item.category === "expenses") : [];
     const incomeData = loaderData?.budget ? loaderData.budget.filter(item => item.category === "income") : [];
-
-
+    const summary_data = actionData?.summary || "";
 
     return (
         <>
             <ExpenseData expense_data={expenseData} />
             <IncomeData income_data={incomeData} />
-            <SummaryData all_data={data || []} />
-
+            <SummaryData summary_data={summary_data} all_data={data || []} />
             <div>
                 <h1>Personal Finance Data</h1>
                 <table>

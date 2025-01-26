@@ -44,7 +44,7 @@ export default function Navigation() {
           </NavLink>
         </li>
         <li>
-          <button className="btn btn-xs btn-error bg-red-400" onClick={handleClick}>Logout</button>
+          <button className="text-white hover:text-gray-300 font-bold bg-transparent border border-white rounded p-2" onClick={handleClick}>Logout</button>
         </li>
       </ul>
     </nav>

@@ -16,7 +16,7 @@ export default function Index() {
   const UserContext = useContext(GlobalContext);
   useEffect(() => {
     if (id) {
-      UserContext.setUser({ id })
+      UserContext?.setUser({ id })
     } 
   }, [id])
 
