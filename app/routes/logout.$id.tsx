@@ -1,6 +1,4 @@
-import { useOutletContext } from "@remix-run/react";
 import useLogout from "~/hooks/logout";
-import { OutletContext } from "~/types";
 
 export async function action({ params }: any) {
   const id = params.id;
@@ -11,7 +9,5 @@ export async function action({ params }: any) {
 }
 
 export default function Logout() {
-  const {supabase, session} = useOutletContext<OutletContext>();
-  useLogout(supabase, session)
   return null;
 }

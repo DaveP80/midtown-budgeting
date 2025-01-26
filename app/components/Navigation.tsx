@@ -1,7 +1,15 @@
-import { Form, NavLink } from "@remix-run/react";
+import { NavLink, useNavigate } from "@remix-run/react";
+import { useContext } from "react";
+import { GlobalContext } from "~/context/globalcontext";
 
-export default function Navigation({ context }: any) {
-  const { session } = context;
+export default function Navigation() {
+  const UserContext = useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    UserContext.setUser({ id: null });
+    navigate("/");
+  }
   return (
     <nav className="bg-gray-800 p-4">
       <ul className="flex space-x-6">
@@ -17,7 +25,7 @@ export default function Navigation({ context }: any) {
         </li>
         <li>
           <NavLink
-            to="/auth"
+            to={UserContext?.user?.id ? `/profile/${UserContext.user.id}` : "/auth"}
             className={({ isActive }) =>
               `text-white hover:text-gray-300 ${isActive ? "font-bold" : ""}`
             }
@@ -35,19 +43,9 @@ export default function Navigation({ context }: any) {
             About
           </NavLink>
         </li>
-        {session?.user ? (
-          <li>
-            <Form
-              id="logoutForm"
-              action={`/logout/${session.user.id}`}
-              method="post"
-            >
-              <button type="submit" className="btn btn-xs btn-error">Logout</button>
-            </Form>
-          </li>
-        ) : (
-          <div className=""></div>
-        )}
+        <li>
+          <button className="text-white hover:text-gray-300 font-bold bg-transparent border border-white rounded p-2" onClick={handleClick}>Logout</button>
+        </li>
       </ul>
     </nav>
   );
