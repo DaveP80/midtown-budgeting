@@ -13,7 +13,7 @@ function IncomeData({ income_data }: { income_data: any }) {
         setDescriptions(fetchedDescriptions);
         if (fetchedDescriptions.length > 0) {
             setDescription(fetchedDescriptions[0]);
-        } 
+        }
 
     }, [income_data]);
 
@@ -22,7 +22,7 @@ function IncomeData({ income_data }: { income_data: any }) {
     }
 
     const handleSubtotalChange = (e) => {
-        const initValue = income_data?.length>0 ? income_data.find(item => item.description === description)?.amount || 0 : 0;
+        const initValue = income_data?.length > 0 ? income_data.find(item => item.description === description)?.amount || 0 : 0;
         setSubtotal(+e.target.value + +initValue);
     }
     const foundMatches = income_data?.length > 0 ? income_data.find(item => item.description === description) : null;
@@ -31,7 +31,7 @@ function IncomeData({ income_data }: { income_data: any }) {
         for (let n of income_data) {
             TotalIncome += Number(n.amount);
         }
-    }  
+    }
 
     return (
         <>
@@ -58,13 +58,13 @@ function IncomeData({ income_data }: { income_data: any }) {
                 {description && (
                     <Form method="post" action={`/profile/${id}/enterincome`}>
                         <label htmlFor='description_row'>Add some more income for: {description}</label>
-                        <input type="hidden" name="description_row" readOnly value={description}/>
-                        <input type="number" min="1" name="description_row" onChange={handleSubtotalChange}/>
-                        <input type="hidden" name="subtotal" readOnly value={subtotal || 0}/>
+                        <input type="hidden" name="description_row" readOnly value={description} />
+                        <input type="number" min="1" name="description_row" onChange={handleSubtotalChange} />
+                        <input type="hidden" name="subtotal" readOnly value={subtotal || 0} />
                         <button type="submit">Enter: {subtotal}</button>
                     </Form>
                 )
-            }
+                }
             </>}
             <h2>Add new Income row?</h2>
             <fetcher.Form method="post" action={`/profile/${id}/newincome`}>

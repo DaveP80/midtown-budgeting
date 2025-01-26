@@ -1,6 +1,8 @@
 import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { useLoaderData } from 'react-router';
+import ExpenseData from '~/components/ExpenseData';
 import IncomeData from '~/components/IncomeData';
+import SummaryData from '~/components/SummaryData';
 import { yourBudgetData } from '~/utils/queries/budget.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -22,15 +24,16 @@ export default function PersonalFinanceRoute() {
         return <>A server Error Occured</>
     }
     const data = loaderData?.budget;
-    const expenseData = loaderData?.budget ? loaderData.budget.filter(item => item.category === "expense") : [];
+    const expenseData = loaderData?.budget ? loaderData.budget.filter(item => item.category === "expenses") : [];
     const incomeData = loaderData?.budget ? loaderData.budget.filter(item => item.category === "income") : [];
 
 
 
     return (
         <>
-            {/* <ExpenseData expense_data={expenseData} /> */}
+            <ExpenseData expense_data={expenseData} />
             <IncomeData income_data={incomeData} />
+            <SummaryData all_data={data || []} />
 
             <div>
                 <h1>Personal Finance Data</h1>

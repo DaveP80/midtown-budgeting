@@ -1,65 +1,81 @@
 import { Form, useFetcher, useParams } from '@remix-run/react';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-function ExpenseData({expense_data}: {expense_data: any}) {
+function ExpenseData({ expense_data }: { expense_data: any }) {
     const [description, setDescription] = useState(null);
     const [subtotal, setSubtotal] = useState(0);
-    const {id} = useParams();
+    const { id } = useParams();
     const fetcher = useFetcher();
-    const totalExpense = expense_data.reduce((prev, next) => prev.amount + next.amount, 0);
-    const expenseDescriptions = expense_data.map((item) => item.description);
-    const expenseSubtotal = expense_data?.find((item: any) => item.description === description)?.amount || null;
+    const [descriptions, setDescriptions] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchedDescriptions = expense_data.map((item: any) => item.description);
+        setDescriptions(fetchedDescriptions);
+        if (fetchedDescriptions.length > 0) {
+            setDescription(fetchedDescriptions[0]);
+        }
+
+    }, [expense_data]);
+
     const handleChange = (e) => {
         setDescription(e.target.value);
     }
 
     const handleSubtotalChange = (e) => {
-        setSubtotal(expenseSubtotal??0 + e.target.value);
+        const initValue = expense_data?.length > 0 ? expense_data.find(item => item.description === description)?.amount || 0 : 0;
+        setSubtotal(+e.target.value + +initValue);
     }
-  return (
-    <>
-    <div>Total Expense: {totalExpense || 0}</div>
-    <div>
-        {description && (
-            <div>
-                <h3>Expense with description: {description}</h3>
-                Total Expense: {expenseSubtotal}
-            </div>
-        )}
-    </div>
-    {expense_data.length > 0 && <>
-        <fetcher.Form>
-            <select onChange={handleChange}>
-                <option key={"first"}>--dropdown--</option>
-                {
-                    expenseDescriptions.map((item: any, idx: number)=> {
-                        return (
-                            <option key={idx}>{item}</option>
-                        )
-                    })
-                }
-            </select>
-        </fetcher.Form>
-        { description && (
-                   <Form method="post" action={`/profile/${id}/enterexpense.tsx`}>
-                    <label htmlFor='description_row'>Adjust expense for: {description}</label>
-                   <input type="number" min="1" name="description_row" onChange={handleSubtotalChange}/>
-                   <input hidden name="running_total" value={subtotal}/>
-                   <button type="submit">Enter: {subtotal}</button>
-               </Form> 
-        )
+    const foundMatches = expense_data?.length > 0 ? expense_data.find(item => item.description === description) : null;
+    let TotalExpense = 0;
+    if (expense_data?.length > 0) {
+        for (let n of expense_data) {
+            TotalExpense += Number(n.amount);
         }
-        </>}
-        <h2>Add new Expense row?</h2>
-        <fetcher.Form method="post" action={`/profile/${id}/newexpense`}>
-        <label htmlFor="description">description:</label>
-        <input name="description" type="text" />
-        <label htmlFor="amount">starting amount:</label>
-        <input name="amount" type="number" min="1" />
-        <button type="submit">Enter new expense line!</button>
-      </fetcher.Form>  
+    }
+
+    return (
+        <>
+            <div>
+                {descriptions && (
+                    <div>
+                        <div>Total Expenses across all descriptions: {TotalExpense}</div>
+                        <h3>Expense with description: {description}, Total Expense: {foundMatches ? foundMatches.amount : 0}</h3>
+                    </div>
+                )}
+            </div>
+            {expense_data.length > 0 && <>
+                <fetcher.Form>
+                    <select onChange={handleChange}>
+                        {
+                            descriptions.map((item: any, idx: number) => {
+                                return (
+                                    <option key={idx}>{item}</option>
+                                )
+                            })
+                        }
+                    </select>
+                </fetcher.Form>
+                {description && (
+                    <Form method="post" action={`/profile/${id}/enterexpense`}>
+                        <label htmlFor='description_row'>Increase the expense for: {description}</label>
+                        <input type="hidden" name="description_row" readOnly value={description} />
+                        <input type="number" min="1" name="description_row" onChange={handleSubtotalChange} />
+                        <input type="hidden" name="subtotal" readOnly value={subtotal || 0} />
+                        <button type="submit">Enter: {subtotal}</button>
+                    </Form>
+                )
+                }
+            </>}
+            <h2>Add new Expense row?</h2>
+            <fetcher.Form method="post" action={`/profile/${id}/newexpense`}>
+                <label htmlFor="description">description:</label>
+                <input name="description" type="text" />
+                <label htmlFor="amount">starting expense amount:</label>
+                <input name="amount" type="number" min="1" />
+                <button type="submit">Enter new expense line!</button>
+            </fetcher.Form>
         </>
-  )
+    )
 }
 
 export default ExpenseData

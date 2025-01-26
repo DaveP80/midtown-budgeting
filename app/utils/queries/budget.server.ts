@@ -47,6 +47,17 @@ const enterNewIncomeDesc = async(args: any[]) => {
     };
 }
 
+const enterNewExpenseDesc = async(args: any[]) => {
+    try {
+        await db.any(`insert into personal_finance_${args[0]} (user_id, category, description, amount) values ($1, $2, $3, $4)`, args);
+        return {message: "new descriptor of expense added", ok: true};
+
+    } catch(e) {
+        throw (e);
+
+    };
+}
+
 const updateIncomeOnDesc = async(args: any[]) => {
     try {
         await db.any(`update personal_finance_${args[0]} set amount = $4 where category = $2 and description = $3`, args);
@@ -57,10 +68,21 @@ const updateIncomeOnDesc = async(args: any[]) => {
     };
 }
 
+const updateExpenseOnDesc = async(args: any[]) => {
+    try {
+        await db.any(`update personal_finance_${args[0]} set amount = $4 where category = $2 and description = $3`, args);
+        return {message: "expense on description updated value", ok: true};
+    } catch(e) {
+        throw (e);
+    };
+}
+
 export {
     tableExists,
     makeBudgetTables,
     yourBudgetData,
     enterNewIncomeDesc,
-    updateIncomeOnDesc
+    enterNewExpenseDesc,
+    updateIncomeOnDesc,
+    updateExpenseOnDesc
 }
