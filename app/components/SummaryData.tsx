@@ -44,7 +44,11 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
                                 <FontAwesomeIcon icon={faStar} />
                             </button>
                         </Form>
-                        Your Disposable Income is: {BottomLine}.
+                        <section className="disposable_income_data">
+
+                        Your Disposable Income is: <p className="disposable_value">{BottomLine}</p>.
+
+                        </section>
                     </div>
             }
             {

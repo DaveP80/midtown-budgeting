@@ -25,7 +25,7 @@ export default function Index() {
       <Link to={`pwdchange/${UserContext?.user?.id}`}>Change Password</Link>
       {
         !loaderData?.ok ? <Link to={`makebudget/${UserContext?.user?.id}`}>Start Tracking your Finances Now!</Link> :
-        <Link to={`yourdata`}>See your Current Budget Balances!</Link>
+        <Link className="your_data_link" to={`yourdata`}>See your Current Budget Balances!</Link>
       }
 
       <Outlet />

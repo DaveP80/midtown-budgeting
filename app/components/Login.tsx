@@ -16,11 +16,13 @@ export function Login({ errors, status }: { errors: any, status: { message: stri
       {status.message || ""}
       {
         status?.ok && <div>
+          <div className="confirm-message">
           A 4 digit code has been sent to your email, please confirm to proceed.
+          </div>
           <Form method="post" action={`/auth/verify/${status.id}`}>
             <label htmlFor="Code">Enter 4 digit Code:</label>
             <input name="Code" type="text" />
-            <button type="submit">Enter</button>
+            <button name="mfa-button" type="submit">Enter</button>
           </Form>
         </div>
       }

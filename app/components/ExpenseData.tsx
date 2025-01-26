@@ -59,9 +59,9 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
                     <fetcher.Form method="post" action={`/profile/${id}/enterexpense`}>
                         <label htmlFor='description_row'>Increase the expense for: {description}</label>
                         <input type="hidden" name="description_row" readOnly value={description} />
-                        <input type="text" name="description_row" onChange={handleSubtotalChange} required pattern="-?[0-9]*" placeholder='1'/>
+                        <input type="text" name="incrementer" onChange={handleSubtotalChange} required pattern="-?[0-9]*" placeholder='1'/>
                         <input type="hidden" name="subtotal" readOnly value={subtotal || 0} />
-                        <button type="submit">Enter: {subtotal}</button>
+                        <button name="enter_expense_btn" type="submit">Enter: {subtotal}</button>
                     </fetcher.Form>
                 )
                 }
