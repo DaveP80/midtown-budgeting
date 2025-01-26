@@ -1,6 +1,6 @@
 import { Form, useFetcher } from "@remix-run/react";
 
-export const Login = ({ errors, status }: { errors: any, status: { message: string, id: string | number, ok: boolean } }) => {
+export function Login({ errors, status }: { errors: any, status: { message: string, id: string | number, ok: boolean } }) {
 
   return (
     <>

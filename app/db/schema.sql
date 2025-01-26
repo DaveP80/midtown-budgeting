@@ -57,3 +57,6 @@ ALTER TABLE ONLY public.users
     ADD CONSTRAINT user_pkey PRIMARY KEY (id);
 
 CREATE TRIGGER users_insert_trigger AFTER INSERT ON public.users FOR EACH ROW EXECUTE FUNCTION public.insert_auth_user();
+
+ALTER TABLE users
+ADD COLUMN has_budget BOOLEAN DEFAULT FALSE;

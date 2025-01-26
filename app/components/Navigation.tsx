@@ -25,7 +25,7 @@ export default function Navigation() {
         </li>
         <li>
           <NavLink
-            to="/auth"
+            to={UserContext?.user?.id ? `/profile/${UserContext.user.id}` : "/auth"}
             className={({ isActive }) =>
               `text-white hover:text-gray-300 ${isActive ? "font-bold" : ""}`
             }

@@ -13,10 +13,10 @@ export async function action({ request }: ActionFunctionArgs) {
     if (password && password.length < 5) { pwdErr = true };
     const success = (!pwdErr && !emailErr);
     if (success) {
-        const result = await login({ password, email });
-        if (result?.ok) {
+        try {
+            const result = await login({ password, email });
             return Response.json({ message: result.message, id: result.id, ok: true });
-        } else {
+        } catch (e) {
             return Response.json({ message: "Please retry with your email and password", id: -1, ok: false });
         }
     }

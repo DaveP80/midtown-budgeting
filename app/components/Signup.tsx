@@ -9,7 +9,7 @@ export default function({ errors, message }: { errors: { isPwdErr: boolean, isEm
         {errors.isEmailErr && <p>Email must be alphanumeric longer than 4 characters.</p>}
         <label htmlFor="password">password:</label>
         <input name="password" type="password" />
-            {errors.isPwdErr && <p>Password must be alphanumeric longer than 4 characters.</p>}
+            {errors.isPwdErr && <p>Password must be alphanumeric longer than 7 characters.</p>}
             <button type="submit">Sign Up</button>
         </Form>
         {message.message || ""}

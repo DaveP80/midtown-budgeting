@@ -1,7 +1,5 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { useActionData, useNavigate } from "@remix-run/react";
-import { useContext, useEffect } from "react";
-import { GlobalContext } from "~/context/globalcontext";
+import { useActionData } from "@remix-run/react";
 import { confirmCode } from "~/utils/queries/users.server";
 
 export async function action({ request, params }: ActionFunctionArgs) {

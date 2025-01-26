@@ -14,7 +14,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     let pwdErr = false;
     let emailErr = false;
     if (old_password && old_password.length < 5) { pwdErr = true };
-    if (new_password && new_password.length<5) {pwdErr = true};
+    if (new_password && new_password.length<8) {pwdErr = true};
     const success = !pwdErr;
     if (success && id) {
           try {

@@ -10,7 +10,7 @@ export async function action({ request }: ActionFunctionArgs) {
     let pwdErr = false;
     let emailErr = false;
     if (email && email.length < 7) { emailErr = true };
-    if (password && password.length < 5) { pwdErr = true };
+    if (password && password.length < 8) { pwdErr = true };
     const success = (!pwdErr && !emailErr);
     if (success) {
         try {

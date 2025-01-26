@@ -8,7 +8,7 @@ function ChangePwd({errors, status}: {errors: {isPwdErr: boolean}, status: {mess
     <input name="old_password" type="password" />
     <label htmlFor="new_password">new password:</label>
     <input name="new_password" type="password" />
-    {errors.isPwdErr && <p>Password must be alphanumeric longer than 4 characters.</p>}
+    {errors.isPwdErr && <p>Password must be alphanumeric longer than 7 characters.</p>}
     <button type="submit">Change Password</button>
     {status.message || ""}
   </fetcher.Form>
