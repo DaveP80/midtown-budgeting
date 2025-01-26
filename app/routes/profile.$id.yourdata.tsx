@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { useLoaderData } from 'react-router';
+import IncomeData from '~/components/IncomeData';
 import { yourBudgetData } from '~/utils/queries/budget.server';
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -28,7 +29,7 @@ export default function PersonalFinanceRoute() {
 
     return (
         <>
-            <ExpenseData expense_data={expenseData} />
+            {/* <ExpenseData expense_data={expenseData} /> */}
             <IncomeData income_data={incomeData} />
 
             <div>

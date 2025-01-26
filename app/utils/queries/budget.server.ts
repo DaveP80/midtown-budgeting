@@ -36,8 +36,31 @@ const yourBudgetData = async (id: number | string) => {
     }
 }
 
+const enterNewIncomeDesc = async(args: any[]) => {
+    try {
+        await db.any(`insert into personal_finance_${args[0]} (user_id, category, description, amount) values ($1, $2, $3, $4)`, args);
+        return {message: "new descriptor of income added", ok: true};
+
+    } catch(e) {
+        throw (e);
+
+    };
+}
+
+const updateIncomeOnDesc = async(args: any[]) => {
+    try {
+        await db.any(`update personal_finance_${args[0]} set amount = $4 where category = $2 and description = $3`, args);
+        return {message: "income on description updated value", ok: true};
+    } catch(e) {
+        throw (e);
+
+    };
+}
+
 export {
     tableExists,
     makeBudgetTables,
-    yourBudgetData
+    yourBudgetData,
+    enterNewIncomeDesc,
+    updateIncomeOnDesc
 }
