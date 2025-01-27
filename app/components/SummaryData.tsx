@@ -33,7 +33,7 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
     let BottomLine = TotalIncome + TotalExpense;
 
     return (
-        <div className="flex flex-col md:m-4 xs:m-1 border border-green-700 p-4 shadow-md rounded bg-slate-100">
+        <div className="flex flex-col md:m-4 xs:m-1 border border-green-700 ms:px-2 xs:px-1 py-3 shadow-md rounded bg-slate-100">
             {
                 (!TotalIncome && !TotalExpense) ?
                     <div className="text-center mx-auto"><p>
@@ -41,16 +41,16 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
                         No Summary Data, Need to start tracking income and expenses.
                     </p>
                     </div>
-                    : <div className="mx-auto">
+                    : <div className="flex flex-col items-center mx-auto">
                         <Form method="post">
                             <button onClick={() => setLoading(true)} name="bottom_line" value={BottomLine} type="submit" className="flex items-center space-x-2 bg-gray-200 rounded-lg p-2">
                                 Generate Summary
                                 <FontAwesomeIcon icon={faStar} />
                             </button>
                         </Form>
-                        <section className="disposable_income_data">
+                        <section className="disposable_income_data display-flex flex-wrap">
 
-                            Your Disposable Income is: <p className="disposable_value">{BottomLine}</p>
+                            <h2 className="disposable_value text-2xl">Your Disposable Income is: {BottomLine}$</h2>
 
                         </section>
                     </div>

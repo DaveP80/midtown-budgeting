@@ -103,15 +103,7 @@ const createUser = async (data) => {
             throw new EmailHostError(`Email host server error`);
         }
     } catch (error) {
-        if (
-            error instanceof UserAlreadyExistsError ||
-            error instanceof EmailHostError
-        ) {
-            throw error;
-        } else
-            throw new UserAlreadyExistsError(
-                `User with email ${email} already exists.`,
-            );
+        throw (error)
     }
 };
 
@@ -197,7 +189,7 @@ const authLogin = async (decodedToken: Record<string, string> | string) => {
             decodedToken?.id,
         );
         if (auUser.length === 0) {
-            throw new AuthError(`Invalid id: ${decodedToken.id}`);
+            throw new AuthError(`Invalid id: ${JSON.stringify(decodedToken)}`);
         } else {
             let sqlArr = auUser[0];
             return sqlArr;

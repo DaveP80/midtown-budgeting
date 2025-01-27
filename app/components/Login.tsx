@@ -5,15 +5,15 @@ export function Login({ errors, status }: { errors: any, status: { message: stri
   return (
     <div className="max-w-sm mx-auto mt-8 p-4 bg-white shadow-md rounded-md">
       <Form className="flex flex-col space-y-4" method="post">
-        <label htmlFor="email">email:</label>
+        <label htmlFor="email">Email:</label>
         <input name="email" type="email" className="border border-gray-300 rounded-md p-2" required/>
         {errors.isEmailErr && <p className="text-red-500">Email must be alphanumeric longer than 4 characters.</p>}
-        <label htmlFor="password">password:</label>
+        <label htmlFor="password">Password:</label>
         <input name="password" type="password" className="border border-gray-300 rounded-md p-2"/>
         <div className="login-error-message">
         {errors.isPwdErr && <p className="text-red-500">Password must be alphanumeric longer than 4 characters.</p>}
         </div>
-        <button type="submit" className="bg-green-500 text-white py-2 rounded-md">Login</button>
+        <button type="submit" disabled={status?.ok ? true : false} className="bg-green-500 text-white py-2 rounded-md">Login</button>
       </Form>
       <aside className="text-center">
       {status.message || ""}

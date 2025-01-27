@@ -1,10 +1,12 @@
 import { Form, useFetcher, useParams } from '@remix-run/react';
 import { useContext, useEffect, useState } from 'react'
 import { GlobalContext } from '~/context/globalcontext';
+import DeleteEntity from './DeleteEntity';
 
 function IncomeData({ income_data }: { income_data: any }) {
     const [description, setDescription] = useState(0);
     const [subtotal, setSubtotal] = useState(0);
+    const [showDelete, setShowDelete] = useState(false);
     const { id } = useParams();
     const [descriptions, setDescriptions] = useState<string[]>([]);
     const TableContext = useContext(GlobalContext);
@@ -34,6 +36,11 @@ function IncomeData({ income_data }: { income_data: any }) {
         const initValue = income_data?.length > 0 ? income_data.find(item => item.description === descriptions[description])?.amount || 0 : 0; 
         setSubtotal(+e.target.value + +initValue);
     }
+
+    const handleToggle = () => {
+        setShowDelete(!showDelete);
+    }
+
     const foundMatches = income_data?.length > 0 ? income_data.find(item => item.description === descriptions[description]) : null;
     let TotalIncome = 0;
     if (income_data?.length > 0) {
@@ -48,7 +55,7 @@ function IncomeData({ income_data }: { income_data: any }) {
                 {descriptions && (
                     <div>
                         <div>Total Income across all descriptions: {TotalIncome}</div>
-                        <h3>Income with description: {descriptions[description]}, Total Income: {foundMatches ? foundMatches.amount : 0}</h3>
+                        <h3 className="text-blue-700">Income with description: {descriptions[description]}, Total Income: {foundMatches ? foundMatches.amount : 0}</h3>
                     </div>
                 )}
             </div>
@@ -83,14 +90,21 @@ function IncomeData({ income_data }: { income_data: any }) {
             <div className="mx-auto">
             <div className="text-center">
             <h2 className="text-dark mb-2">Add new Income row?</h2>
+            {descriptions?.length> 0 && (
+                                        <div>
+                                        <div onClick={handleToggle} className=" text-red-700 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105">Remove Descriptions</div>
+                                    </div>
+            )}
             </div>
-            <fetcher.Form method="post" action={`/profile/${id}/newincome`} className="mb-4">
+            {showDelete ? <DeleteEntity category={"income"} descriptions={descriptions} /> :
+            <fetcher.Form method="post" action={`/profile/${id}/newincome`} className="mb-2 p-1 md:mb-4 md:p-auto">
                 <label htmlFor="description" className="block mb-2">description:</label>
                 <input name="description" type="text" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="job"/>
                 <label htmlFor="amount" className="block mb-2">starting amount:</label>
                 <input name="amount" type="text" required pattern="[0-9]*" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="0"/>
                 <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">Enter new income line!</button>
             </fetcher.Form>
+}
             </div>
         </div>
     )

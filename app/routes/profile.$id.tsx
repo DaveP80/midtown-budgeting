@@ -30,8 +30,8 @@ export default function Index() {
         <nav className="bg-gray-200 py-4 xs:px-1 md:px-8 text-center md:flex xs:flex-col justify-center">
             <Link to={`pwdchange/${UserContext?.user?.id}`} className="text-black mr-4">Change Password</Link>
             {!loaderData?.ok ? 
-                <Link to={`makebudget/${UserContext?.user?.id}`} className="text-green-500">Start Tracking your Finances Now!</Link> :
-                <Link to={`yourdata`} className="text-green-500 your_data_link">See your Current Budget Balances!</Link>
+                <Link to={`makebudget/${UserContext?.user?.id}`} className="text-green-500 font-bold">Start Tracking your Finances Now!</Link> :
+                <Link to={`yourdata`} className="text-green-500 font-bold your_data_link">See your Current Budget Balances!</Link>
             }
         </nav>
         <div className="">
