@@ -40,7 +40,6 @@ export function ErrorBoundary() {
 
 export default function App() {
 
-
   return (
     <html lang="en">
       <head>

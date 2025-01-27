@@ -21,14 +21,22 @@ export default function Index() {
   }, [id])
 
   return (
-    <div>Welcome user
-      <Link to={`pwdchange/${UserContext?.user?.id}`}>Change Password</Link>
-      {
-        !loaderData?.ok ? <Link to={`makebudget/${UserContext?.user?.id}`}>Start Tracking your Finances Now!</Link> :
-        <Link to={`yourdata`}>See your Current Budget Balances!</Link>
-      }
-
-      <Outlet />
-    </div>
+    <div className="bg-gray-300 flex flex-col min-h-screen">
+        <header className="container text-dark py-4 mx-auto text-center">
+            <h1 className="text-lg">
+              Welcome {UserContext?.user?.name}
+              </h1>
+        </header>
+        <nav className="bg-gray-200 py-4 xs:px-1 md:px-8 text-center md:flex xs:flex-col justify-center">
+            <Link to={`pwdchange/${UserContext?.user?.id}`} className="text-black mr-4">Change Password</Link>
+            {!loaderData?.ok ? 
+                <Link to={`makebudget/${UserContext?.user?.id}`} className="text-green-500">Start Tracking your Finances Now!</Link> :
+                <Link to={`yourdata`} className="text-green-500 your_data_link">See your Current Budget Balances!</Link>
+            }
+        </nav>
+        <div className="">
+            <Outlet />
+        </div>
+</div>
   )
 };

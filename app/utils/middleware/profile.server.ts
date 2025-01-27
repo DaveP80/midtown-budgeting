@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { db } from "../render.server.ts";
-import { PasswordError } from "../lib/customErrors.js";
+import { PasswordError, UserNotFoundError } from "../lib/customErrors.js";
 export async function checkOldPassword(args: any[]) {
     try {
         const foundUserAndPwd = await db.any(
@@ -11,7 +11,7 @@ export async function checkOldPassword(args: any[]) {
             args
         );
         if (!foundUserAndPwd.length) {
-            throw new PasswordError("Invalid old password", "user password change error");
+            throw new UserNotFoundError("Id not associated with known user.");
         } else {
             let user = foundUserAndPwd[0];
             let comparedPassword = await bcrypt.compare(args[1], user.password);
@@ -27,6 +27,6 @@ export async function checkOldPassword(args: any[]) {
             }
         }
     } catch (error) {
-        throw new Error();
+        throw(error);
     }
 }
