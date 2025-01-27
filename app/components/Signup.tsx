@@ -11,7 +11,7 @@ export default function Signup({ errors, message }: { errors: { isPwdErr: boolea
             <input name="password" type="password" className="border border-gray-300 rounded-md p-2" />
             <div className="error-message">
                 {errors.isPwdErr && <p className="text-red-500">Password must be alphanumeric and longer than 7 characters.</p>}
-                {errors.pwdStrengthErr && <p className="text-red-500">Password must contain at least one uppercase character.</p>}
+                {errors.pwdStrengthErr && <p className="text-red-500">Password must contain at least one UpperCase character.</p>}
             </div>
             <button type="submit" className="bg-green-500 text-white py-2 rounded-md">Sign Up</button>
         </Form>

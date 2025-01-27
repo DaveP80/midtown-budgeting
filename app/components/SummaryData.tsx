@@ -63,7 +63,7 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
                                 <button onClick={() => setOpen(true)} className="text-blue-500">Open Your AI Summary</button>
                                 {open && (
                                     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
-                                        <div className="bg-white p-8 rounded-lg">
+                                        <div className="bg-white xs:overflow-y-auto p-8 rounded-lg">
                                             {summary_data}
                                             <button onClick={() => setOpen(false)} className="text-red-500">Close</button>
                                         </div>

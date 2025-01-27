@@ -8,5 +8,7 @@ export type UserContextType =
       user: User;
       setUser: (user: User) => void;
       clearUser: () => void;
+      rowId: number;
+      setRowId: (args: number) => void;
     }
   | undefined;

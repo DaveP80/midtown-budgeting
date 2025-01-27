@@ -8,6 +8,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useActionData } from '@remix-run/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons/faSpinner';
+import { useContext } from 'react';
+import { GlobalContext } from '~/context/globalcontext';
 
 export async function action({ request }: LoaderFunctionArgs) {
     const data = await request.formData();
@@ -34,6 +36,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export default function PersonalFinanceRoute() {
     const loaderData = useLoaderData();
     const actionData = useActionData<typeof action>();
+    const TableContext = useContext(GlobalContext);
 
     if (!loaderData) {
         return <FontAwesomeIcon icon={faSpinner} spin />
@@ -65,7 +68,7 @@ export default function PersonalFinanceRoute() {
                         </thead>
                         <tbody className="text-gray-600">
                             {data.map((row: any, idx: number) => (
-                                <tr key={idx} className={idx % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                                <tr key={idx} className={`${idx % 2 === 0 ? "bg-gray-100" : "bg-white"}${TableContext?.rowId == row.id ? " border border-red-400" : ""}`}>
                                     <td className="py-2 px-4">{row.id}</td>
                                     <td className="py-2 px-4">{row.category}</td>
                                     <td className="py-2 px-4">{row.description}</td>
