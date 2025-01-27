@@ -93,7 +93,7 @@ require('dotenv').config();
     }
     await test1();
     await test2();
-    //await test3();
+    await test3();
 
     await browser.close();
 })();

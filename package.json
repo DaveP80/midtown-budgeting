@@ -7,9 +7,8 @@
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "no-start": "remix-serve ./build/server/index.js",
-    "start": "npm run dev",
-    "typecheck": "tsc",
-    "test": "jest"
+    "start": "remix-serve ./build/server/index.js",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
