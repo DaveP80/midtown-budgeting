@@ -33,27 +33,31 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
     let BottomLine = TotalIncome + TotalExpense;
 
     return (
-        <>
+        <div className="flex flex-col md:m-4 xs:m-1 border border-green-700 p-4 shadow-md rounded bg-slate-100">
             {
                 (!TotalIncome && !TotalExpense) ?
-                    <div>No Summary Data, Need to start tracking income and expenses.</div>
-                    : <div>
+                    <div className="text-center mx-auto"><p>
+
+                        No Summary Data, Need to start tracking income and expenses.
+                    </p>
+                    </div>
+                    : <div className="mx-auto">
                         <Form method="post">
-                            <button onClick={() => setLoading(true)} name="bottom_line" value={BottomLine} type="submit" className="flex items-center space-x-2">
+                            <button onClick={() => setLoading(true)} name="bottom_line" value={BottomLine} type="submit" className="flex items-center space-x-2 bg-gray-200 rounded-lg p-2">
                                 Generate Summary
                                 <FontAwesomeIcon icon={faStar} />
                             </button>
                         </Form>
                         <section className="disposable_income_data">
 
-                        Your Disposable Income is: <p className="disposable_value">{BottomLine}</p>.
+                            Your Disposable Income is: <p className="disposable_value">{BottomLine}</p>
 
                         </section>
                     </div>
             }
             {
                 loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
-                    <>
+                    <div className="mx-auto">
                         {summary_data ? (
                             <div>
                                 <button onClick={() => setOpen(true)} className="text-blue-500">Open Your AI Summary</button>
@@ -67,10 +71,10 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
                                 )}
                             </div>
                         ) : null}
-                    </>
+                    </div>
 
             }
-        </>
+        </div>
     )
 }
 

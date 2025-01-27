@@ -36,7 +36,7 @@ export default function Index() {
     const isEmailErr = formData?.emailErr;
     const pwdStrengthErr = formData?.pwdStrengthErr;
     const message = formData?.message
-    return <>
+    return  (
         <Signup errors={{ isPwdErr, pwdStrengthErr, isEmailErr }} message={{ message }} />
-    </>
+    )
 }

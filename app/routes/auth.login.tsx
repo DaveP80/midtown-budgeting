@@ -17,7 +17,7 @@ export async function action({ request }: ActionFunctionArgs) {
             const result = await login({ password, email });
             return Response.json({ message: result.message, id: result.id, ok: true });
         } catch (e) {
-            return Response.json({ message: "Please retry with your email and password", id: -1, ok: false });
+            return Response.json({ message: e.message, id: -1, ok: false });
         }
     }
     return Response.json({ pwdErr, emailErr, success, message: false });
@@ -30,7 +30,5 @@ export default function Index() {
     const message = formData?.message;
     const ok = formData?.ok;
     const id = formData?.id;
-    return <>
-        <Login errors={{ isPwdErr, isEmailErr }} status={{ message, id, ok }} />
-    </>
+    return (<Login errors={{ isPwdErr, isEmailErr }} status={{ message, id, ok }} />)
 }

@@ -55,6 +55,16 @@ class UserAlreadyExistsError extends Error {
       this.message = message;
     }
   }
+
+  class UserNotFoundError extends Error {
+    constructor(message) {
+      super();
+      this.name = "auth error not found";
+      this.status = 403;
+      this.error = `id not found in table of users`;
+      this.message = message;
+    }
+  }
   
   class SQLError extends Error {
     constructor(error, option) {
@@ -74,5 +84,6 @@ class UserAlreadyExistsError extends Error {
     RefreshError,
     SQLError,
     AuthError,
+    UserNotFoundError
   };
   

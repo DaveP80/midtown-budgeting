@@ -1,5 +1,6 @@
 export type User = {
   id?: string | number | null;
+  name?: string;
 } | null;
 
 export type UserContextType =
