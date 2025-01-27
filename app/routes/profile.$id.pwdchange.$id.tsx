@@ -14,7 +14,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   let pwdErr = false;
   let pwdStrengthErr = false;
   let emailErr = false;
-  if (old_password && old_password.length < 5) { pwdErr = true };
   if (new_password && new_password.length < 8) { pwdErr = true };
   if (new_password && !pwdErr) {
     pwdStrengthErr = !/[A-Z]/.test(new_password);
@@ -23,14 +22,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (success && id) {
     try {
       await checkOldPassword([id, old_password]);
-    } catch (e: unknown) {
-      return Response.json({ message: e?.message, ok: false })
+      const result = await changePassword([id, new_password]);
+      if (result?.ok) {
+        return Response.json({ message: result.message, ok: true });
+      } else {
+        return Response.json({ message: "Please retry with your old password and new password", id: -1, ok: false });
+      }
     }
-    const result = await changePassword([id, new_password]);
-    if (result?.ok) {
-      return Response.json({ message: result.message, ok: true });
-    } else {
-      return Response.json({ message: "Please retry with your email and password", id: -1, ok: false });
+    catch (e: unknown) {
+      return Response.json({ message: e?.message, ok: false })
     }
   }
   return Response.json({ pwdErr, pwdStrengthErr, emailErr, success, message: false });
@@ -44,7 +44,7 @@ export default function Index() {
   const pwdStrengthErr = formData?.pwdStrengthErr;
   const ok = formData?.ok;
   const id = UserContext?.user?.id || -1;
-  return <>
+  return (
     <ChangePwd errors={{ isPwdErr, pwdStrengthErr }} status={{ message, id, ok }} />
-  </>
+  )
 }
