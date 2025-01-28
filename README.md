@@ -16,6 +16,7 @@ A full-stack project that includes MFA login and sign up. A new user can use the
 - Communication of password changes, and attempts to login to your account.
 - Password hashing and old security codes cycled out.
 - Password strength enforced.
+- Pages that show profile information and budget data are protected routes. Invalid id's in params are redirected.
 #### MFA
 This uses MFA. New users must sign up with a password and email. New logins require the user to check their email for login code. If there is a failed attempt with submitting a login code, the user is notified with an email. A user can also change their password, as long as they prove they know their old password. When the password is successfully changed the user is notified with an email that the password was changed. If there is a failed attempt at logging in the user is notified.
 #### Avoiding exploits
@@ -75,7 +76,7 @@ PG_HOST=
 PG_PORT=5432
 PG_USER=
 PG_PASSWORD=
-JWT_TOKEN_SECRET_KEY=QHU4IKE4HsyMHSPvpwA4Lg
+JWT_TOKEN_SECRET_KEY=
 EMAIL_ADD=
 GENAI_API_KEY=
 

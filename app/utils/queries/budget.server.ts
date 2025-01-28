@@ -2,19 +2,19 @@ import { SQLError } from "../lib/customErrors.js";
 import { db } from "../render.server.ts";
 
 const makeBudgetTables = async (id: string | number) => {
-    console.log(id);
     if (!id) {
         throw new SQLError("need a id passed in", "sql operation error");
     }
     try {
+        const foundId = await db.any(`select id from users where id = $1`, id)
         await db.any(`
-        create table personal_finance_${id} (
+        create table personal_finance_${foundId[0].id} (
             id serial primary key,
             user_id int references users(id),
             category varchar(10) check (category in ('income', 'expenses')),
             description varchar(255),
             amount numeric,
-            constraint unique_description_category_${id} unique (description, category)
+            constraint unique_description_category_${foundId[0].id} unique (description, category)
         )
         `)
         await db.any(`update users set has_budget = true where id = $1`, id);
@@ -24,8 +24,8 @@ const makeBudgetTables = async (id: string | number) => {
 }
 
 const tableExists = async (args: number | string) => {
-    const exists = await db.any('select * from users where id = $1 and has_budget = true', args);
-    return { message: "checked for budget tables", ok: exists.length > 0 || false }
+    const exists = await db.any('select id, email from users where id = $1 and has_budget = true', args);
+    return { message: "checked for budget tables", ok: exists.length > 0 || false, data: exists }
 }
 
 const yourBudgetData = async (id: number | string) => {
