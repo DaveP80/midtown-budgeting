@@ -6,9 +6,9 @@ export async function loader() {
   
   export default function Component() {
     return (
-        <>
+        <div className="min-h-screen">
         <Link to="/">Home</Link>
         <h1>Not Found</h1>
-        </>
+        </div>
     )
   }
