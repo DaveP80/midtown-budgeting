@@ -1,6 +1,6 @@
 export type User = {
   id?: string | number | null;
-  name?: string;
+  email?: string;
 } | null;
 
 export type UserContextType =

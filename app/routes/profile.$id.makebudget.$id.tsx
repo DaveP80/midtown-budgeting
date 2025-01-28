@@ -7,6 +7,6 @@ export async function loader({ params }: ActionFunctionArgs) {
         await makeBudgetTables(id);
         return redirect(`/profile/${id}/yourdata`);
     } catch (e: any) {
-        return redirect(`/profile/${id}`)
+        return redirect(`/auth`)
     }
 }
