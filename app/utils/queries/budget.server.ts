@@ -37,43 +37,60 @@ const yourBudgetData = async (id: number | string) => {
     }
 }
 
-const enterNewIncomeDesc = async(args: any[]) => {
+const enterNewIncomeDesc = async (args: any[]) => {
     try {
         await db.any(`insert into personal_finance_${args[0]} (user_id, category, description, amount) values ($1, $2, $3, $4)`, args);
-        return {message: "new descriptor of income added", ok: true};
+        return { message: "new descriptor of income added", ok: true };
 
-    } catch(e) {
+    } catch (e) {
         throw (e);
 
     };
 }
 
-const enterNewExpenseDesc = async(args: any[]) => {
+const enterNewExpenseDesc = async (args: any[]) => {
     try {
         await db.any(`insert into personal_finance_${args[0]} (user_id, category, description, amount) values ($1, $2, $3, $4)`, args);
-        return {message: "new descriptor of expense added", ok: true};
+        return { message: "new descriptor of expense added", ok: true };
 
-    } catch(e) {
+    } catch (e) {
         throw (e);
 
     };
 }
 
-const updateIncomeOnDesc = async(args: any[]) => {
+const deleteFromExpenses = async (args: any[]) => {
     try {
-        await db.any(`update personal_finance_${args[0]} set amount = $4 where category = $2 and description = $3`, args);
-        return {message: "income on description updated value", ok: true};
-    } catch(e) {
+        await db.any(`delete from personal_finance_${args[0]} where category = 'expenses' and description = '${args[1]}'`, args);
+        return { message: "expenses deleted", ok: true };
+    } catch (e) {
         throw (e);
-
     };
 }
 
-const updateExpenseOnDesc = async(args: any[]) => {
+const deleteFromIncome = async (args: any[]) => {
+    try {
+        await db.any(`delete from personal_finance_${args[0]} where category = 'income' and description = '${args[1]}'`, args);
+        return { message: "income deleted", ok: true };
+    } catch (e) {
+        throw (e);
+    };
+}
+
+const updateIncomeOnDesc = async (args: any[]) => {
     try {
         await db.any(`update personal_finance_${args[0]} set amount = $4 where category = $2 and description = $3`, args);
-        return {message: "expense on description updated value", ok: true};
-    } catch(e) {
+        return { message: "income on description updated value", ok: true };
+    } catch (e) {
+        throw (e);
+    };
+}
+
+const updateExpenseOnDesc = async (args: any[]) => {
+    try {
+        await db.any(`update personal_finance_${args[0]} set amount = $4 where category = $2 and description = $3`, args);
+        return { message: "expense on description updated value", ok: true };
+    } catch (e) {
         throw (e);
     };
 }
@@ -85,5 +102,7 @@ export {
     enterNewIncomeDesc,
     enterNewExpenseDesc,
     updateIncomeOnDesc,
-    updateExpenseOnDesc
+    updateExpenseOnDesc,
+    deleteFromExpenses,
+    deleteFromIncome
 }

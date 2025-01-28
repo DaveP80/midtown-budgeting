@@ -23,5 +23,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Confirmation() {
     const data = useLoaderData<typeof loader>();
 
-    return <div className="text-center">{data?.ok ? <h3 className="text-lg">You have confirmed email on sign up! Please log in with the password you created. MFA is active now</h3> : <h3>Something went wrong.</h3>}</div>;
+    return <div className="text-center">{data?.ok ? <h3 className="text-lg font-bold">You have confirmed email on sign up! Please log in with the password you created. MFA is active now</h3> : <h3>Something went wrong.</h3>}</div>;
 }

@@ -16,7 +16,7 @@ export async function action({ request }: ActionFunctionArgs) {
     if (password && !pwdErr) {
         pwdStrengthErr = !/[A-Z]/.test(password);
     }
-    const success = (!pwdErr && !pwdStrengthErr && !emailErr);
+    const success = (email && password && !pwdErr && !pwdStrengthErr && !emailErr);
     if (success) {
         try {
             const result = await createUser({ password, email });

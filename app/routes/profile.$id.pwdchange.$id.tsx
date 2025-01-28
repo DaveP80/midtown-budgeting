@@ -18,7 +18,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (new_password && !pwdErr) {
     pwdStrengthErr = !/[A-Z]/.test(new_password);
   }
-  const success = !pwdErr && !pwdStrengthErr;
+  const success = old_password && new_password && !pwdErr && !pwdStrengthErr;
   if (success && id) {
     try {
       await checkOldPassword([id, old_password]);
