@@ -24,8 +24,16 @@ const makeBudgetTables = async (id: string | number) => {
 }
 
 const tableExists = async (args: number | string) => {
-    const exists = await db.any('select id, email from users where id = $1 and has_budget = true', args);
-    return { message: "checked for budget tables", ok: exists.length > 0 || false, data: exists }
+    try {
+        const checkIdExists = await db.any(`select id from users where id = $1`, args);
+        if (checkIdExists?.length === 0) {
+            return { message: "invalid id", ok: false, data: null };
+        }
+        const exists = await db.any('select id, email from users where id = $1 and has_budget = true', args);
+        return { message: "checked for budget tables", ok: exists.length > 0, data: exists }
+    } catch (e) {
+        throw (e);
+    }
 }
 
 const yourBudgetData = async (id: number | string) => {
