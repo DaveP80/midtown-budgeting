@@ -23,6 +23,9 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
             if (rowId) {
                 TableContext?.setRowId(rowId);
             }
+            if (showDelete) {
+                handleToggle();
+            }
         }
     }, [fetcher.state])
 
@@ -53,9 +56,9 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
     return (
         <div className="bg-gray-50 flex flex-col md:m-4 xs:m-1 rounded shadow-md border border-blue-500">
             <div className="text-center mb-4">
-                {descriptions && (
+                <h3 className="text-gray-700">Total Expenses across all descriptions: {TotalExpense}</h3>
+                {descriptions.length>0 && (
                     <div>
-                        <h3 className="text-gray-700">Total Expenses across all descriptions: {TotalExpense}</h3>
                         <h3 className="text-blue-700">Expense with description: {descriptions[description]}, Total Expense: {foundMatches ? foundMatches.amount : 0}</h3>
                     </div>
                 )}
@@ -81,15 +84,15 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
             <div className="mx-auto">
                 <div className="text-center">
                     <h2 className="text-dark mb-2">Add new Expense row?</h2>
-                    {descriptions?.length > 0 && (
+                    {descriptions.length > 0 && (
                         <div>
                             <div onClick={handleToggle} className=" text-red-700 cursor-pointer transition duration-300 ease-in-out transform hover:scale-105">Remove Descriptions</div>
                         </div>
                     )}
-
+                {
+                    (showDelete && descriptions.length > 0) && <DeleteEntity category={"expenses"} descriptions={descriptions}/>
+                }
                 </div>
-                {showDelete ? <DeleteEntity category={"expenses"} descriptions={descriptions} /> :
-
                     <fetcher.Form method="post" action={`/profile/${id}/newexpense`} className="mb-2 p-1 md:mb-4 md:p-auto">
                         <label htmlFor="description" className="block mb-2">Description:</label>
                         <input name="description" type="text" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="rent" />
@@ -97,8 +100,6 @@ function ExpenseData({ expense_data }: { expense_data: any }) {
                         <input name="amount" type="text" required pattern="[0-9]*" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="0" />
                         <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">Enter new expense line!</button>
                     </fetcher.Form>
-
-                }
             </div>
         </div>
     )

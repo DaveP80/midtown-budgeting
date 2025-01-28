@@ -30,5 +30,8 @@ export default function Index() {
     const message = formData?.message;
     const ok = formData?.ok;
     const id = formData?.id;
-    return (<Login errors={{ isPwdErr, isEmailErr }} status={{ message, id, ok }} />)
+
+    return (
+        <Login errors={{ isPwdErr, isEmailErr }} status={{ message, id, ok }} />
+    )
 }

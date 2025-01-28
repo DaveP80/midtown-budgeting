@@ -1,6 +1,6 @@
 function About() {
     return (
-<div className="bg-gray-120 p-8">
+<div className="bg-gray-120 p-8 min-h-screen">
     <div className="max-w-2xl mx-auto">
         <section className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Authentication Flow:</h2>
