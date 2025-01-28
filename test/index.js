@@ -44,50 +44,51 @@ require('dotenv').config();
         await page.type('input[name="password"]', process.env.PASSWORD);
         await page.click('button[type="submit"]');
 
-        await page.waitForSelector('.confirm-message');
-        let login_one = false;
-
-        const confirmMessage = await page.$eval('.confirm-message', el => el.textContent);
-        if (confirmMessage.includes('A 4 digit code has been sent to your email')) {
-            console.log('puppeter first step login');
-            login_one = true;
-
-        } else {
-            console.error('Test failed: MFA code message did not appear as expected.');
-            return;
-        }
-        if (login_one) {
-
-            const secretValue = await new Promise((resolve) => {
-                const realine = require('readline');
-                const r1 = realine.createInterface({ input: process.stdin, output: process.stdout });
-                r1.question('MFA code: ', (answer) => {
-                    r1.close();
-                    resolve(answer.trim());
-                });
-
-            })
-            await page.type('input[name="Code"]', secretValue.toString());
-            await page.click('button[name="mfa-button"]');
-            await page.waitForSelector('.your_data_link');
-            await page.click('.your_data_link');
-            await page.waitForSelector('input[name="incrementer"]');
-            await page.waitForSelector('.disposable_value');
-            const firstValue = await page.$eval('.disposable_value', el => el.textContent);
-            await page.type('input[name="incrementer"]', "10");
-            await page.click('button[name="enter_expense_btn"]');
-            await page.waitForNavigation();
-            await page.waitForSelector('.disposable_value');
-            const secondValue = await page.$eval('.disposable_value', el => el.textContent);
-
-            const testPass = Number(secondValue) < Number(firstValue);
-
-            if (testPass) {
-                console.log("successfully logged in with MFA, and tested that increasing expense will decrease disposable income");
-            } else {
-                console.log("successfully logged in with MFA, but dashboard malfunction");
-            }
-
+        try {
+                    await page.waitForSelector('.confirm-message');
+                    let login_one = false;
+            
+                    const confirmMessage = await page.$eval('.confirm-message', el => el.textContent);
+                    if (confirmMessage.includes('A 4 digit code has been sent to your email')) {
+                        console.log('puppeter first step login');
+                        login_one = true;
+            
+                    } else {
+                        console.error('Test failed: MFA code message did not appear as expected.');
+                        return;
+                    }
+                    if (login_one) {
+            
+                        const secretValue = await new Promise((resolve) => {
+                            const realine = require('readline');
+                            const r1 = realine.createInterface({ input: process.stdin, output: process.stdout });
+                            r1.question('MFA code: ', (answer) => {
+                                r1.close();
+                                resolve(answer.trim());
+                            });
+            
+                        })
+                        await page.type('input[name="Code"]', secretValue.toString());
+                        await page.click('button[name="mfa-button"]');
+                        await page.waitForSelector('#your_data_link');
+                        await page.click('#your_data_link');
+                        await page.waitForSelector('input[name="incrementer"]');
+                        await page.waitForSelector('#disposable_value');
+                        const firstValue = await page.$eval('#disposable_value', el => el.textContent);
+                        await page.type('input[name="incrementer"]', "10");
+                        await page.click('button[name="enter_expense_btn"]');
+                        await page.waitForNavigation();
+                        await page.waitForSelector('#disposable_value');
+                        const secondValue = await page.$eval('#disposable_value', el => el.textContent);
+                        const testPass = Number(secondValue) < Number(firstValue);
+                        if (testPass) {
+                            console.log("successfully logged in with MFA, and tested that increasing expense will decrease disposable income");
+                        } else {
+                            console.log("successfully logged in with MFA, but dashboard malfunction");
+                        }
+                    }
+        } catch(e) {
+            console.error(e.message);
         }
 
     }

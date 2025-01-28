@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import "./tailwind.css"
 import GlobalContextProvider from "./context/globalcontext";
+import Footer from "./components/Footer";
 
 export const loader = async ({ request }: any) => {
   const response = new Response();
@@ -52,6 +53,7 @@ export default function App() {
         <GlobalContextProvider>
         <Navigation/>
         <Outlet />
+        <Footer/>
         </GlobalContextProvider>
         <ScrollRestoration />
         <Scripts />

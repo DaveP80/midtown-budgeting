@@ -20,7 +20,7 @@ export default function Index() {
                 )}
         </nav>
         <div className="flex-1">
-            <Outlet />
+                <Outlet />
         </div>
     </div>
 }

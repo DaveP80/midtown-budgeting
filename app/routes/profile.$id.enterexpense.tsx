@@ -10,7 +10,7 @@ export async function action({request, params}: LoaderFunctionArgs) {
         await updateExpenseOnDesc([id, "expenses", colDesc, newAmount]);
         return redirect(`/profile/${id}/yourdata`);
     } catch(e) {
-        return redirect(`/profile/${id}/yourdata`)
+        return redirect(`/profile/${id}/yourdata`);
     };
 }
 
