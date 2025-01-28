@@ -29,7 +29,8 @@ When a user has some budgeting data, and a table associated with the data, the u
 - **Remix Framework** 
 - **Vite and Nodejs** server and build
 - **Google Cloud** deploy to gcloud with one command
-- **Pupetter testing** Three tests that run a headless browser.
+- **Puppeteer testing** Three tests that run a headless browser.
+- **pgTAP testing** A unit test to test the trigger function.
 - **Typescript** Type safety in development.
 - **React and Tailwind** Components and forms with these components.
 ### Setup
@@ -43,7 +44,6 @@ When a user has some budgeting data, and a table associated with the data, the u
    ##Add environment variables
    npm run dev
    ```
-
 
 ## Deployment
 
@@ -60,6 +60,8 @@ gcloud config set project <PROJECT_ID>
 ## Testing
 
 Puppeteer (nodejs) is in the `/test` directory. This uses a headless browser to do interactions, end to end, on the local locally ran development server. `node index.js` is to run the 3 tests I have made. New tests can be made by encapsulating a testing function.
+
+pgTAP is a package for doing SQL unit tests. I have made a sql test runner script in `/test`. Need to install `pg_prove`, and run tests in a running SQL server.
 #### Test Runner
 - **Unit Testing**: Run with Pupeteer.
   ```bash

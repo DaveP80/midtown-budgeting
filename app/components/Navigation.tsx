@@ -22,7 +22,7 @@ export default function Navigation() {
 
   const handleClick = (name: string) => {
     if (name === 'Logout') {
-      UserContext?.setUser({ id: null });
+      UserContext?.setUser({ id: null, email: ""});
     }
   }
   return (
