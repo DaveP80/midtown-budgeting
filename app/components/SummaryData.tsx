@@ -45,13 +45,11 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
                         <Form method="post">
                             <button onClick={() => setLoading(true)} name="bottom_line" value={BottomLine} type="submit" className="flex items-center space-x-2 bg-gray-200 rounded-lg p-2">
                                 Generate Summary
-                                <FontAwesomeIcon icon={faStar} />
+                                <FontAwesomeIcon icon={faStar} className="rotate-slowly" />
                             </button>
                         </Form>
-                        <section className="disposable_income_data display-flex flex-wrap">
-
-                            <h2 className="disposable_value text-2xl">Your Disposable Income is: {BottomLine}$</h2>
-
+                        <section className="disposable_income_data display-flex flex-wrap text-2xl">
+                          Your Disposable Income is: <h2 id="disposable_value" className="inline">{BottomLine}</h2>$
                         </section>
                     </div>
             }
@@ -63,7 +61,7 @@ function SummaryData({ all_data, summary_data }: { all_data: any[], summary_data
                                 <button onClick={() => setOpen(true)} className="text-blue-500">Open Your AI Summary</button>
                                 {open && (
                                     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
-                                        <div className="bg-white xs:overflow-y-auto p-8 rounded-lg">
+                                        <div className="bg-white p-8 rounded-lg max-h-fit">
                                             {summary_data}
                                             <button onClick={() => setOpen(false)} className="text-red-500">Close</button>
                                         </div>
