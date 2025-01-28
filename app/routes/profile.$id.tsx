@@ -5,9 +5,8 @@ import { GlobalContext } from "~/context/globalcontext"
 import { tableExists } from "~/utils/queries/budget.server"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-
   const checkUserBudget = await tableExists(params?.id || -1);
-  if (!checkUserBudget.ok) {
+  if (!checkUserBudget.data) {
     return redirect("/auth")
   }
   return Response.json({ ok: checkUserBudget.ok, data: checkUserBudget.data })
