@@ -104,7 +104,7 @@ function IncomeData({ income_data }: { income_data: any }) {
                 </div>
                 <fetcher.Form method="post" action={`/profile/${id}/newincome`} className="mb-2 p-1 md:mb-4 md:p-auto">
                     <label htmlFor="description" className="block mb-2">description:</label>
-                    <input name="description" type="text" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="job" />
+                    <input name="description" type="text" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="job" required/>
                     <label htmlFor="amount" className="block mb-2">starting amount:</label>
                     <input name="amount" type="text" required pattern="[0-9]*" className="border border-gray-300 rounded-md p-2 mb-2" placeholder="0" />
                     <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md">Enter new income line!</button>

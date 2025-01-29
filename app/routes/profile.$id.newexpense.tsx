@@ -7,7 +7,7 @@ export async function action({request, params}: LoaderFunctionArgs) {
     const newDesc = data.get("description");
     const newAmount = data.get("amount");
     try {
-        await enterNewExpenseDesc([id, "expenses", newDesc, newAmount]);
+        await enterNewExpenseDesc([id, "expenses", newDesc || "unknown", newAmount]);
         return redirect(`/profile/${id}/yourdata`);
     } catch(e) {
         return redirect(`/profile/${id}/yourdata`)
