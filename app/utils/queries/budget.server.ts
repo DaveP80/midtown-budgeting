@@ -38,7 +38,7 @@ const tableExists = async (args: number | string) => {
 
 const yourBudgetData = async (id: number | string) => {
     try {
-        const personalFinanceData = await db.any(`select * from personal_finance_${id} order by category, description`);
+        const personalFinanceData: any[] | unknown = await db.any(`select * from personal_finance_${id} order by category, description`);
         return { budget: personalFinanceData, ok: true };
     } catch (e) {
         throw (e);

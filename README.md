@@ -24,7 +24,7 @@ SQL table `auth_users` keeps a history of all emails used.
 Verification codes are deleted after they have been used.
 ## Google Gemini Summary
 
-When a user has some budgeting data, and a table associated with the data, the user can see this information on `/profile/id/yourdata`.  The svg "Generate Summary" will evaluate the disposable income you have and make a summary of what to do now based on the result of called the google gemini LLM.
+When a user has some budgeting data, and a table associated with the data, the user can see this information on `/profile/id/yourdata`.  The svg "Generate Summary" will evaluate the rundown of your expenses and your income and generate a financial strategy you should consider.
 ### Technologies
 - **Remix Framework** 
 - **Vite and Nodejs** server and build

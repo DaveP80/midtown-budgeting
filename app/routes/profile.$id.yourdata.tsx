@@ -16,11 +16,13 @@ export async function action({ request }: LoaderFunctionArgs) {
     const moneyInfo = data.get("bottom_line");
 
     const genAI = new GoogleGenerativeAI(process.env.GENAI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash",
+        generationConfig: {
+            maxOutputTokens: 500
+        }
+    });
 
-    const prompt = `My income and expense bottom line is ${moneyInfo} is this good from a budgeting perspective?`;
-
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(moneyInfo as string);
     return Response.json({ summary: result.response.text(), ok: true });
 }
 

@@ -1,4 +1,5 @@
-
+SET search_path = pgtap, public;
+BEGIN;
 
 CREATE TABLE public.auth_users (
     user_id integer NOT NULL,
@@ -41,4 +42,5 @@ CREATE TRIGGER users_insert_trigger AFTER INSERT ON public.users FOR EACH ROW EX
 SELECT plan(1);
 INSERT INTO users(email, password) VALUES (myemail@example.com, ffwjf938834393j3d9);
 SELECT has_row('auth_users', 'user_id = (SELECT id from users WHERE email = ''myemail@example.com'')', 'Trigger should enter new user on two tables');
-SELECT finish();
+SELECT * FROM finish();
+ROLLBACK;
